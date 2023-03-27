@@ -11,8 +11,8 @@ pipeline {
     	TAG = "0.0.${BUILD_NUMBER}"
 
     	NEXUS_CREDENTIALS = credentials('Nexus-credentials-jenkins')
-    	NEXUS_USR = NEXUS_CREDENTIALS_URS
-    	NEXUS_PWD = NEXUS_CREDENTIALS_PSW
+    	//NEXUS_USR = NEXUS_CREDENTIALS_URS
+    	//NEXUS_PWD = NEXUS_CREDENTIALS_PSW
     	
            }
 	stages{
@@ -33,7 +33,9 @@ pipeline {
 		stage("Deploy Artifact"){
 			steps{
 				//We changed the pom.xml file accordingly to deploy tou our private Nexus artifactory
+				withMaven(globalMavenSettingsConfig: 'sample-maven-web-app') {
 				sh 'mvn -f sample-maven-web-app/pom.xml clean deploy'
+				}
 			}
 		}
 	}
