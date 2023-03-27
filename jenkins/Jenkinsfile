@@ -1,0 +1,36 @@
+pipeline {
+	agent any 
+	tools {
+        maven 'Maven'
+        jdk 'jdk'
+    }
+    environment {
+    	
+    	// Docker ENV vars
+    	USER_CREDENTIALS = credentials('Docker-credentials')
+    	TAG = "0.0.${BUILD_NUMBER}"
+    	
+           }
+	stages{
+		stage("Build"){
+			steps{
+				// With tests passed build and package the app
+				sh 'mvn -f sample-maven-web-app/pom.xml clean install'
+			}
+		}	
+		stage("Containerize"){
+			steps{
+				script {				
+					// We also build the Docker image. I used my docker account and tagged the image based on the pipeline build number.
+                    			dockerImage = docker.build("${USER_CREDENTIALS_USR}/sample-maven-web-app:${TAG}", "-f sample-maven-web-app/Dockerfile .")
+        	       	}
+			}
+		}
+		stage("Deploy Artifact"){
+			steps{
+				//We changed the pom.xml file accordingly to deploy tou our private Nexus artifactory
+				sh 'mvn -f sample-maven-web-app/pom.xml clean deploy'
+			}
+		}
+	}
+}
