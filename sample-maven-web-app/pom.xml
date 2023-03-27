@@ -31,11 +31,11 @@
   <distributionManagement>
    <repository>
       <id>maven</id>
-      <url>scp://172.19.0.4:8081/repository/maven/</url>
+      <url>http://172.19.0.4:8081/repository/maven/</url>
    </repository>
    <snapshotRepository>
             <id>maven-snapshot</id>
-            <url>scp://172.19.0.4:8081/snapshots/maven/</url>
+            <url>http://172.19.0.4:8081/snapshots/maven/</url>
    </snapshotRepository>
   </distributionManagement>
 
