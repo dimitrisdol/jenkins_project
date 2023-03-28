@@ -51,13 +51,29 @@ pipeline {
 			agent {
 			kubernetes{
 				yaml '''
-                                apiVersion: v1
-                                kind: Pod
+                                apiVersion: apps/v1
+                                kind: Deployment
                                 metadata:
-                                  name: web-app
-                                  image: 192.168.49.4:8082/jmmisd/sample-web-app:latest
-                                  ports:
-                                  - containerPort:8080
+                                  app: web-app
+                                spec:
+                                  replicas: 1
+                                  selector:
+                                    matchLabels:
+                                      app: web-app
+                                  template:
+                                    metadata:
+                                      labels:
+                                        app:web-app
+                                    spec:
+                                      containers:
+                                      - name: web-app
+                                        image: 192.168.49.4:8082/jmmisd/sample-web-app:latest
+                                        ports:
+                                        - containerPort:8080
+                                        command:
+                                        - sleep
+                                        args:
+                                        - 99d
                                  '''
 				}
 			}
