@@ -8,6 +8,7 @@ pipeline {
     	
     	// Docker ENV vars
     	USER_CREDENTIALS = credentials('Docker-credentials')
+    	NEXUS_CREDENTIAL_ID = "Nexus-credentials-jenkins"
     	TAG = "0.0.${BUILD_NUMBER}"
     	
            }
