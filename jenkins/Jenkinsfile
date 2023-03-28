@@ -24,6 +24,7 @@ pipeline {
 				script {				
 					// We also build the Docker image. I used my docker account and tagged the image based on the pipeline build number.
                     			dockerImage = docker.build("${USER_CREDENTIALS_USR}/sample-maven-web-app:${TAG}", "-f sample-maven-web-app/Dockerfile .")
+                    			dockerImageLatest = docker.build("${USER_CREDENTIALS_USR}/sample-maven-web-app:latest", "-f sample-maven-web-app/Dockerfile .")
         	       	}
 			}
 		}
@@ -41,9 +42,37 @@ pipeline {
         			// Pushing the image to our local docker repository inside Nexus
             		docker.withRegistry( 'http://172.19.0.4:8082', NEXUS_CREDENTIAL_ID ) {
             		dockerImage.push()
+            		dockerImageLatest.push()
     	        			}
       				}     
         		}
+		}
+		stage("Deploy to Kubernetes") {
+			agent {
+			kubernetes{
+				yaml '''
+				    apiVersion: apps/v1
+				    kind: Deployment
+				    metadata:
+				      name: web-app
+				    spec:
+	   			      replicas: 1
+				      selector:
+				        matchLabels:
+				          app: web-app
+				      template:
+			  	        metadata:
+				          labels:
+				            app: web-app
+				        spec:
+				          containers:
+				          - name: web-app
+				            image: 192.168.49.4:8082/jmmisd/sample-web-app:latest
+				            ports:
+				            - containerPort: 8080
+                                 '''
+				}
+			}
 		}
 	}
 }
