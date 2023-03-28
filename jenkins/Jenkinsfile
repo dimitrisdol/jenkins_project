@@ -9,10 +9,6 @@ pipeline {
     	// Docker ENV vars
     	USER_CREDENTIALS = credentials('Docker-credentials')
     	TAG = "0.0.${BUILD_NUMBER}"
-
-    	NEXUS_CREDENTIALS = credentials('Nexus-credentials-jenkins')
-    	//NEXUS_USR = NEXUS_CREDENTIALS_URS
-    	//NEXUS_PWD = NEXUS_CREDENTIALS_PSW
     	
            }
 	stages{
@@ -37,6 +33,16 @@ pipeline {
 				sh 'mvn -f sample-maven-web-app/pom.xml clean deploy'
 				}
 			}
+		}
+		stage("Deploy Docker Image") {
+     		steps{
+        		script {
+        			// Pushing the image to our local docker repository inside Nexus
+            		docker.withRegistry( 'http://172.19.0.4:8082', NEXUS_CREDENTIAL_ID ) {
+            		dockerImage.push()
+    	        			}
+      				}     
+        		}
 		}
 	}
 }
