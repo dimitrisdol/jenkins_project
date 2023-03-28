@@ -73,6 +73,9 @@ pipeline {
                                  '''
 				}
 			}
+			steps{
+				sh 'pwd'
+			}
 		}
 	}
 }
