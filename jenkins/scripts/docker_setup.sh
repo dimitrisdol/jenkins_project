@@ -27,4 +27,5 @@ minikube start --driver docker --delete-on-failure --insecure-registry="192.168.
 #Connect the nexus repository and the jenkins container with minikube
 docker network connect --ip 192.168.49.4 minikube nexus
 docker network connect --ip 192.168.49.3 minikube jenkins
+docker network connect --ip 192.168.49.5 minikube jenkins-docker
 #
