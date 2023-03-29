@@ -48,6 +48,7 @@ pipeline {
         		}
 		}
 		stage("Deploy to Kubernetes") {
+			agent{
 			kubernetes{
 				inheritFrom 'jenkins-slave'
 				yaml '''
@@ -67,6 +68,7 @@ pipeline {
                                     - 99d
                                  '''
 				}
+			}
 			steps{
 				sh 'pwd'
 			}
