@@ -48,8 +48,8 @@ pipeline {
         		}
 		}
 		stage("Deploy to Kubernetes") {
-			agent {
 			kubernetes{
+				inheritFrom 'jenkins-slave'
 				yaml '''
                                 apiVersion: v1
                                 kind: Pod
@@ -67,7 +67,6 @@ pipeline {
                                     - 99d
                                  '''
 				}
-			}
 			steps{
 				sh 'pwd'
 			}
