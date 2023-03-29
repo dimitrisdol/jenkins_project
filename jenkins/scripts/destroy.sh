@@ -6,3 +6,4 @@ docker rm jenkins
 docker rm jenkins-docker
 docker stop nexus
 docker rm nexus
+minikube delete
