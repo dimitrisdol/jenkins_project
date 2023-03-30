@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: web-app
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: web-app
@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: web-app
-        image: jmmisd/sample-web-app:0.0.1
+        image: http://192.168.49.4:8082/jmmisd/sample-maven-web-app:latest
         ports:
         - containerPort: 8080
 
