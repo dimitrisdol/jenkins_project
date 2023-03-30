@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: web-app
-        image: http://192.168.49.4:8082/jmmisd/sample-maven-web-app:latest
+        image: 192.168.49.4:8082/jmmisd/sample-maven-web-app:latest
         ports:
         - containerPort: 8080
 
