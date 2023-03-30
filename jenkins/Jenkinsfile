@@ -20,9 +20,9 @@ pipeline {
         NAMESPACE = "default"
 
         //Deployment files
-        DEPLOYMENT_FILE = "deployment-sample-maven-web-app"
-    	 SERVICE_FILE = "service-sample-maven-web-app"
-    	 PORT_FORWARDING_FILE = "port-forward-script-sample-maven-web-app"
+        DEPLOYMENT_FILE = "deployment-sample-maven-web-app.yaml"
+    	 SERVICE_FILE = "service-sample-maven-web-app.yaml"
+    	 PORT_FORWARDING_FILE = "port-forward-script-sample-maven-web-app.sh"
            }
 	stages{
 		stage("Build"){
