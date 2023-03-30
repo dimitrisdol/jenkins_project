@@ -20,9 +20,9 @@ pipeline {
         NAMESPACE = "default"
 
         //Deployment files
-        DEPLOYMENT_FILE = "deployment-sample-maven-web-app.yaml"
-    	 SERVICE_FILE = "service-sample-maven-web-app.yaml"
-    	 PORT_FORWARDING_FILE = "port-forward-script-sample-maven-web-app.sh"
+        //DEPLOYMENT_FILE = "deployment-sample-maven-web-app.yaml"
+    	 //SERVICE_FILE = "service-sample-maven-web-app.yaml"
+    	 //PORT_FORWARDING_FILE = "port-forward-script-sample-maven-web-app.sh"
            }
 	stages{
 		stage("Build"){
@@ -74,10 +74,11 @@ pipeline {
         				// Then check to see if any pods are available and apply the new deployment changes and service
 					sh '''
 					./kubectl get pods
-					./kubectl apply -f ${DEPLOYMENT_FILE}
-					./kubectl apply -f ${SERVICE_FILE}
-					chmod +x ${PORT_FORWARDING_FILE}
-					./${PORT_FORWARDING_FILE}
+					./kubectl apply -f sample-maven-web-app/kube/deployment.yaml
+					./kubectl apply -f sample-maven-web-app/kube/service.yaml
+					chmod +x sample-maven-web-app/kube/deploy.sh
+					cd sample-maven-web-app/kube/
+					./deploy.sh
 					'''
 				}
 			}
