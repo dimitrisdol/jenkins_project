@@ -13,7 +13,7 @@ docker run --name jenkins-docker -d --privileged --network jenkins --network-ali
 docker build -t jenkins_blueocean:latest -f ${ENV_PATH}Dockerfile .
 
 #Run Jenkins container
-docker run --name jenkins -d --network jenkins --env DOCKER_HOST=tcp://docker:2376 --env DOCKER_CERT_PATH=/certs/client --env DOCKER_TLS_VERIFY=1 -p 8080:8080 -p 50000:50000 -v jenkins-data:/var/jenkins_home -v jenkins-docker-certs:/certs/client:ro -v ${ENV_PATH}:/home --restart=on-failure --ip 172.19.0.3 --env JAVA_OPTS="-Dhudson.plugins.git.GitSCM.ALLOW_LOCAL_CHECKOUT=true" jenkins_blueocean:latest
+docker run --name jenkins -d --network jenkins --env DOCKER_HOST=tcp://docker:2376 --env DOCKER_CERT_PATH=/certs/client --env DOCKER_TLS_VERIFY=1 -p 8080:8080 -p 50000:50000 -p 8081:8081 -v jenkins-data:/var/jenkins_home -v jenkins-docker-certs:/certs/client:ro -v ${ENV_PATH}:/home --restart=on-failure --ip 172.19.0.3 --env JAVA_OPTS="-Dhudson.plugins.git.GitSCM.ALLOW_LOCAL_CHECKOUT=true" jenkins_blueocean:latest
 
 #Create a volume to store our Nexus repository data.
 docker volume create --name nexus-data
