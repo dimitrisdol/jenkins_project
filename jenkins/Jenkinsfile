@@ -9,7 +9,7 @@ pipeline {
     	// Docker ENV vars
     	USER_CREDENTIALS = credentials('Docker-credentials')
     	NEXUS_CREDENTIAL_ID = "Nexus-credentials-jenkins"
-    	NEXUS_DOCKER_REGISTRY = "172.19.0.4:8082"
+    	NEXUS_DOCKER_REGISTRY = "http://172.19.0.4:8082"
     	TAG = "0.0.${BUILD_NUMBER}"
 
     	 //Kubernetes ENV vars
