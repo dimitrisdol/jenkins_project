@@ -13,7 +13,7 @@ docker run --name jenkins-docker -d --privileged --network jenkins --network-ali
 docker build -t jenkins_blueocean:latest -f ${ENV_PATH}Dockerfile .
 
 #Run Jenkins container
-docker run --name jenkins -d --network jenkins --env DOCKER_HOST=tcp://docker:2376 --env DOCKER_CERT_PATH=/certs/client --env DOCKER_TLS_VERIFY=1 -p 8080:8080 -p 50000:50000 -p 8081:8081 -v jenkins-data:/var/jenkins_home -v jenkins-docker-certs:/certs/client:ro -v ${ENV_PATH}:/home --restart=on-failure --ip 172.19.0.3 --env JAVA_OPTS="-Dhudson.plugins.git.GitSCM.ALLOW_LOCAL_CHECKOUT=true" jenkins_blueocean:latest
+docker run --name jenkins -d --network jenkins --env DOCKER_HOST=tcp://docker:2376 --env DOCKER_CERT_PATH=/certs/client --env DOCKER_TLS_VERIFY=1 -p 8080:8080 -p 50000:50000 -p 8088:8088 -v jenkins-data:/var/jenkins_home -v jenkins-docker-certs:/certs/client:ro -v ${ENV_PATH}:/home --restart=on-failure --ip 172.19.0.3 --env JAVA_OPTS="-Dhudson.plugins.git.GitSCM.ALLOW_LOCAL_CHECKOUT=true" jenkins_blueocean:latest
 
 #Create a volume to store our Nexus repository data.
 docker volume create --name nexus-data
@@ -24,8 +24,10 @@ docker run -d --network jenkins -p 8081:8081 -p 8082:8082 -p 8083:8083 --name ne
 #Create a minikube cluster to deploy our application
 minikube start --driver docker --delete-on-failure --insecure-registry="192.168.49.4:8082" --insecure-registry="172.19.0.4:8082" --static-ip="192.168.49.2"
 
+#Wait for minikube and its network to be created
+sleep 120
+
 #Connect the nexus repository and the jenkins container with minikube
 docker network connect --ip 192.168.49.4 minikube nexus
 docker network connect --ip 192.168.49.3 minikube jenkins
 docker network connect --ip 192.168.49.5 minikube jenkins-docker
-#
