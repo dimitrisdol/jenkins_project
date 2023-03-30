@@ -9,8 +9,20 @@ pipeline {
     	// Docker ENV vars
     	USER_CREDENTIALS = credentials('Docker-credentials')
     	NEXUS_CREDENTIAL_ID = "Nexus-credentials-jenkins"
+    	NEXUS_DOCKER_REGISTRY = "172.19.0.4:8082"
     	TAG = "0.0.${BUILD_NUMBER}"
-    	
+
+    	 //Kubernetes ENV vars
+    	 KUBE_CONFIG = "config"
+        KUBE_CREDENTIALS = "kube-cert"
+        KUBE_API_SERVER = "192.168.49.2:8443"
+        CLUSTER_NAME = "minikube"
+        NAMESPACE = "default"
+
+        //Deployment files
+        DEPLOYMENT_FILE = ""
+    	 SERVICE_FILE = ""
+    	 PORT_FORWARDING_FILE = ""
            }
 	stages{
 		stage("Build"){
@@ -40,7 +52,7 @@ pipeline {
      		steps{
         		script {
         			// Pushing the image to our local docker repository inside Nexus
-            		docker.withRegistry( 'http://172.19.0.4:8082', NEXUS_CREDENTIAL_ID ) {
+            		docker.withRegistry( NEXUS_DOCKER_REGISTRY , NEXUS_CREDENTIAL_ID ) {
             		dockerImage.push()
             		dockerImageLatest.push()
     	        			}
@@ -48,29 +60,24 @@ pipeline {
         		}
 		}
 		stage("Deploy to Kubernetes") {
-			agent{
-			kubernetes{
-				inheritFrom 'jenkins-slave'
-				yaml '''
-                                apiVersion: v1
-                                kind: Pod
-                                metadata:
-                                  app: web-app
-                                spec:
-                                  containers:
-                                  - name: web-app
-                                    image: 192.168.49.4:8082/jmmisd/sample-maven-web-app:latest
-                                    ports:
-                                    - containerPort: 8080
-                                    command:
-                                    - sleep
-                                    args:
-                                    - 99d
-                                 '''
-				}
-			}
 			steps{
-				sh 'pwd'
+				withKubeConfig([credentialsId: KUBE_CONFIG,
+						caCertificate: KUBE_CREDENTIALS,
+                    				serverUrl: KUBE_API_SERVER,
+                    				clusterName: CLUSTER_NAME,
+                    				namespace: NAMESPACE
+                   				]) {
+					// Firstly lets curl the kubectl tool as it is was not available inside the jenkins container
+					sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/v1.20.5/bin/linux/amd64/kubectl"'  
+        				sh 'chmod u+x ./kubectl'
+        				// Firstly, we use sed to change the image tag in the deployment file to pull the latest image 
+        				// Then check to see if any pods are available and apply the new deployment changes and service
+					sh '''
+					./kubectl get pods
+					./kubectl apply -f deployment.yaml
+					./kubectl apply -f deployment-service.yaml 
+					'''
+				}
 			}
 		}
 	}
