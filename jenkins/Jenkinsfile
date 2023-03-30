@@ -71,7 +71,6 @@ pipeline {
 					sh '''
 					./kubectl get pods
 					./kubectl apply -f sample-maven-web-app/kube/deployment.yaml
-					./kubectl apply -f sample-maven-web-app/kube/service.yaml
 					chmod +x sample-maven-web-app/kube/deploy.sh
 					cd sample-maven-web-app/kube/
 					./deploy.sh
