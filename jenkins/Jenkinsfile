@@ -22,22 +22,9 @@ pipeline {
            }
 	stages{
 		stage("Build"){
-			agent {
-    			kubernetes {
-      			inheritFrom 'maven-container'
-      			yaml '''
-               spec:
-                 containers:
-                 - name: mvn
-                   image: maven:3.8.7-openjdk-18-slim
-               '''
-    				}
-  				}
 			steps{
-				container('mvn'){
 				// With tests passed build and package the app
 				sh 'mvn -f sample-maven-web-app/pom.xml clean install'
-				}
 			}
 		}	
 		stage("Containerize"){
@@ -79,8 +66,7 @@ pipeline {
 					// Firstly lets curl the kubectl tool as it is was not available inside the jenkins container
 					sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/v1.20.5/bin/linux/amd64/kubectl"'  
         			sh 'chmod u+x ./kubectl'
-        			// Firstly, we use sed to change the image tag in the deployment file to pull the latest image 
-        			// Then check to see if any pods are available and apply the new deployment changes and service
+        			// Check to see if any pods are available and apply the new deployment changes and service
 					sh '''
 					./kubectl get pods
 					./kubectl apply -f sample-maven-web-app/kube/deployment.yaml
