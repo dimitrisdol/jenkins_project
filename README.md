@@ -18,7 +18,7 @@ Then the docker image is deployed to a Kubernetes cluster and the pipeline print
   * In the jenkins/scripts/ folder there is a docker setup script that creates the entire infrastructure in Docker.
   * The destroy script allows you to fastly tear it down aswell.
   * In the Jenkins folder is : 
-      *    **1**. The Dockerfile that build the Jenkins container.
+      *    **1**. The Dockerfile that built the Jenkins container.
       *    **2**. The Jenkinsfile used to deploy the web app.
   * Using an agent with maven and jdk we build and package the app. Required use of custom config.xml and the Maven plugin.
   * Then we push the local artifact to the Nexus repository container created.
