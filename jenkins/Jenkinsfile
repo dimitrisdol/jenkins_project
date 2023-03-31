@@ -14,10 +14,10 @@ pipeline {
 
     	//Kubernetes ENV vars
     	KUBE_CONFIG = "config"
-      KUBE_CREDENTIALS = "kube-cert"
-      KUBE_API_SERVER = "http://192.168.49.2:8443"
-      CLUSTER_NAME = "minikube"
-      NAMESPACE = "default"
+        KUBE_CREDENTIALS = "kube-cert"
+        KUBE_API_SERVER = "http://192.168.49.2:8443"
+        CLUSTER_NAME = "minikube"
+        NAMESPACE = "default"
 
            }
 	stages{
@@ -48,9 +48,9 @@ pipeline {
      		steps{
         		script {
         			// Pushing the image to our local docker repository inside Nexus
-            		docker.withRegistry( NEXUS_DOCKER_REGISTRY , NEXUS_CREDENTIAL_ID ) {
-            		dockerImage.push()
-            		dockerImageLatest.push()
+            			docker.withRegistry( NEXUS_DOCKER_REGISTRY , NEXUS_CREDENTIAL_ID ) {
+            				dockerImage.push()
+            				dockerImageLatest.push()
     	        			}
       				}     
         		}
@@ -58,15 +58,15 @@ pipeline {
 		stage("Deploy to Kubernetes") {
 			steps{
 				withKubeConfig([credentialsId: KUBE_CONFIG,
-														caCertificate: KUBE_CREDENTIALS,
+						caCertificate: KUBE_CREDENTIALS,
                     				serverUrl: KUBE_API_SERVER,
                     				clusterName: CLUSTER_NAME,
                     				namespace: NAMESPACE
                    				]) {
 					// Firstly lets curl the kubectl tool as it is was not available inside the jenkins container
 					sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/v1.20.5/bin/linux/amd64/kubectl"'  
-        	sh 'chmod u+x ./kubectl'
-        	// Check to see if any pods are available and apply the new deployment changes and service
+        				sh 'chmod u+x ./kubectl'
+        				// Check to see if any pods are available and apply the new deployment changes and service
 					sh '''
 					./kubectl get pods
 					./kubectl apply -f sample-maven-web-app/kube/deployment.yaml
