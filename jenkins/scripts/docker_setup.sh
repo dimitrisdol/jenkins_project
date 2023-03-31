@@ -18,7 +18,7 @@ docker run --name jenkins -d --network jenkins --env DOCKER_HOST=tcp://docker:23
 #Create a volume to store our Nexus repository data.
 docker volume create --name nexus-data
 
-#Dun the nexus docker container. Port 8082 will be used for our Nexus Docker repository.
+#Run the nexus docker container. Port 8082 will be used for our Nexus Docker repository.
 docker run -d --network jenkins -p 8081:8081 -p 8082:8082 -p 8083:8083 --name nexus -v nexus-data:/nexus-data --ip 172.19.0.4 sonatype/nexus3
 
 #Create a minikube cluster to deploy our application
