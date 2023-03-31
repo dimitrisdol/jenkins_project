@@ -34,8 +34,10 @@ pipeline {
     				}
   				}
 			steps{
+				container('mvn'){
 				// With tests passed build and package the app
 				sh 'mvn -f sample-maven-web-app/pom.xml clean install'
+				}
 			}
 		}	
 		stage("Containerize"){
