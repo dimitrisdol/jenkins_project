@@ -13,23 +13,23 @@ pipeline {
             spec:
               containers:
               - name: jnlp-slave
-              image: jenkinsci/jnlp-slave
-              tty: true
-              command: ['cat']
+                image: jenkinsci/jnlp-slave
+                tty: true
+                command: ['cat']
               - name: maven
-              image: maven:3.8.7-openjdk-18-slim
-              tty: true
-              command:
-              - sleep
-              args:
-              - 99d
+                image: maven:3.8.7-openjdk-18-slim
+                tty: true
+                command:
+                - sleep
+                args:
+                - 99d
               - name: docker
-              image: docker:dind
-              tty: true
-              command:
-              - sleep
-              args:
-              - 99d
+                image: docker:dind
+                tty: true
+                command:
+                - sleep
+                args:
+                - 99d
             '''
         }
     }
