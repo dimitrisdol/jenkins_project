@@ -22,10 +22,12 @@ pipeline {
         }
 	stages{
 		stage("Build"){
-			docker { 
+			agent {
+                docker { 
                 	image 'maven:3.9.0-eclipse-temurin-11'
                 	args '--network="jenkins"'
-                	}
+                	 }
+            }
 			steps{
 				// With tests passed build and package the app
 				sh 'mvn -f sample-maven-web-app/pom.xml clean install'
@@ -46,7 +48,7 @@ pipeline {
                 docker { 
                 	image 'maven:3.9.0-eclipse-temurin-11'
                 	args '--network="jenkins"'
-                	}
+                	 }
             }
 			steps{
 				  //We changed the pom.xml file accordingly to deploy to our private Nexus artifactory
