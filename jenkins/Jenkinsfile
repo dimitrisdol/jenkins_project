@@ -1,42 +1,9 @@
 pipeline {
-	 agent {
-        kubernetes {
-            label "jenkins-slave"
-            cloud "kubernetes"
-            yaml '''
-            apiVersion: v1
-            kind: Pod
-            metadata:
-              namespace: default
-              labels:
-                jenkins: slave
-            spec:
-              containers:
-              - name: jnlp
-                image: jenkinsci/jnlp-slave
-                tty: true
-                command: ['cat']
-              - name: maven
-                image: maven:3.8.7-openjdk-18-slim
-                tty: true
-                command:
-                - sleep
-                args:
-                - 99d
-              - name: docker
-                image: docker:dind
-                tty: true
-                command:
-                - sleep
-                args:
-                - 99d
-            '''
-        }
-    }
-  	tools {
-        maven 'Maven'
-        jdk 'jdk'
-    }
+	 agent none
+  //	tools {
+  //      maven 'Maven'
+  //     jdk 'jdk'
+  // }
     environment {
     	
     	// Docker ENV vars
@@ -55,45 +22,49 @@ pipeline {
         }
 	stages{
 		stage("Build"){
+			agent {
+                docker { image 'maven:3.9.0-eclipse-temurin-11' }
+            }
 			steps{
-				container("maven") {
 				// With tests passed build and package the app
 				sh 'mvn -f sample-maven-web-app/pom.xml clean install'
-				}
 			}
 		}	
 		stage("Containerize"){
+			agent {
+                docker { image 'docker:dind' }
+            }
 			  steps{
-			  	container("docker") {
 				  script {				
 					  // We also build the Docker image. I used my docker account and tagged the image based on the pipeline build number.
                     			dockerImage = docker.build("${USER_CREDENTIALS_USR}/sample-maven-web-app:${TAG}", "-f sample-maven-web-app/Dockerfile .")
                     			dockerImageLatest = docker.build("${USER_CREDENTIALS_USR}/sample-maven-web-app:latest", "-f sample-maven-web-app/Dockerfile .")
         	       		}
-        	      }
 			}
 		}
 		stage("Deploy Artifact"){
+			agent {
+                docker { image 'maven:3.9.0-eclipse-temurin-11' }
+            }
 			steps{
-				container("maven") {
 				  //We changed the pom.xml file accordingly to deploy tou our private Nexus artifactory
 				  withMaven(globalMavenSettingsConfig: 'sample-maven-web-app') {
 				  sh 'mvn -f sample-maven-web-app/pom.xml clean deploy'
 				  }
-			  }
 			}
 		}
 		stage("Deploy Docker Image") {
+			agent {
+                docker { image 'docker:dind' }
+            }
      			steps{
-     				container("docker") {
         			script {
         				// Pushing the image to our local docker repository inside Nexus
             				docker.withRegistry( NEXUS_DOCKER_REGISTRY , NEXUS_CREDENTIAL_ID ) {
             					dockerImage.push()
             					dockerImageLatest.push()
     	        			}
-    	        	  }
-      				}     
+    	        	  }    
         		}
 		}
 		stage("Deploy to Kubernetes") {
