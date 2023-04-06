@@ -1,9 +1,9 @@
 pipeline {
-	 agent { label 'main' }
+	agent { label 'main' }
   	tools {
-        maven 'Maven'
-        jdk 'jdk'
-    }
+       		maven 'Maven'
+       		jdk 'jdk'
+	}
     environment {
     	
     	// Docker ENV vars
@@ -23,10 +23,10 @@ pipeline {
 	stages{
 		stage("Build"){
 			agent {
-                docker { 
-                	image 'maven:3.9.0-eclipse-temurin-11'
-                	 }
-            }
+        		        docker { 
+                			image 'maven:3.9.0-eclipse-temurin-11'
+                	 	}
+            		}
 			steps{
 				// With tests passed build and package the app
 				sh 'mvn -f sample-maven-web-app/pom.xml clean install'
@@ -35,7 +35,7 @@ pipeline {
 		stage("Containerize"){
 			  steps{
 				  script {				
-					  // We also build the Docker image. I used my docker account and tagged the image based on the pipeline build number.
+					// We also build the Docker image. I used my docker account and tagged the image based on the pipeline build number.
                     			dockerImage = docker.build("${USER_CREDENTIALS_USR}/sample-maven-web-app:${TAG}", "-f sample-maven-web-app/Dockerfile .")
                     			dockerImageLatest = docker.build("${USER_CREDENTIALS_USR}/sample-maven-web-app:latest", "-f sample-maven-web-app/Dockerfile .")
         	       		}
@@ -57,7 +57,7 @@ pipeline {
             					dockerImage.push()
             					dockerImageLatest.push()
     	        			}
-    	        	  }    
+    	        	  	}    
         		}
 		}
 		stage("Deploy to Kubernetes") {
