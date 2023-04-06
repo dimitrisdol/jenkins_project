@@ -12,7 +12,7 @@ pipeline {
                 jenkins: slave
             spec:
               containers:
-              - name: jnlp-slave
+              - name: jnlp
                 image: jenkinsci/jnlp-slave
                 tty: true
                 command: ['cat']
